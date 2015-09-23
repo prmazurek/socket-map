@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+</head>
+<body>
+  <div class="container">
+      <div id="data"></div>
+  </div>
+  <script>
+    $(document).ready(function(){
+      $(document).keydown(function(key){
+        switch(parseInt(key.which, 10)){
+          case 37:
+            ws.send('{"type": "move", "direction": "west"}');
+            break;
+          case 38:
+            ws.send('{"type": "move", "direction": "north"}');
+            break;
+          case 39:
+            ws.send('{"type": "move", "direction": "east"}');
+            break;
+          case 40:
+            ws.send('{"type": "move", "direction": "south"}');
+            break;
+        };
+      });
+    });
+    var host = window.location.host
+    var ws = new WebSocket('ws://'+host+'/ws');
+    ws.onmessage = function(ev){
+      var data = JSON.parse(ev.data);
+      var map = ''
+      var colLength = data.map_state.length;
+      var rowLength = data.map_state[0].length
+
+      for (var y = 0; y < colLength; y++) {
+        for (var x = 0; x < rowLength; x++) {
+          if (data.map_state[y][x].indexOf("Character") > -1){
+            map += '@ '
+          } else {
+            map += 'x '
+          };
+        };
+        map += '<br>'
+      };
+      $('#data').html(map);
+    };
+  </script>
+</body>
+</html>
